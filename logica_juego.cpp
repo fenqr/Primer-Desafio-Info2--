@@ -2,6 +2,17 @@
 #include <cstdlib>
 #include "logica_juego.h"
 #include "bits.h"
+#include "interfaz.h"
+
+using namespace std;
+
+void pausa_visual()
+{
+    cout << "\nPresione ENTER para continuar..." << flush;
+
+    cin.ignore(1000, '\n');
+    cin.get();
+}
 
 // 1. Detectar combinaciones horizontales y verticales (alineaciones de 3 o mas)
 bool* detectar_combinaciones(const unsigned char* tablero, int filas, int cols, bool& hay_combinacion) {
@@ -104,39 +115,148 @@ void eliminar_ficha_usuario(unsigned char* tablero, int fila, int col, int cols,
     }
 }
 
+
 // 6. Procesar ciclo de cascadas en bucle
 void procesar_cascadas(unsigned char* tablero, int filas, int cols,
                        int& total_fichas_eliminadas,
                        int& combinaciones_detectadas,
                        int& cascadas_jugada_actual,
-                       int& puntuacion) {
+                       int& puntuacion)
+{
 
     bool hay_combinacion = false;
 
-    do {
-        hay_combinacion = false;
-        // 1. Buscar si hay alineaciones de 3 o mas
-        bool* marcas = detectar_combinaciones(tablero, filas, cols, hay_combinacion);
 
-        if (hay_combinacion) {
-            combinaciones_detectadas++;
+    do
+    {
+
+        // Reiniciar estado de detección
+        hay_combinacion = false;
+
+
+        bool* marcas = detectar_combinaciones(
+            tablero,
+            filas,
+            cols,
+            hay_combinacion
+            );
+
+
+        if(hay_combinacion)
+        {
+
             cascadas_jugada_actual++;
 
-            // 2. Borrar fichas marcadas
-            int eliminadas_en_paso = eliminar_fichas_marcadas(tablero, marcas, filas, cols);
-            total_fichas_eliminadas += eliminadas_en_paso;
-            puntuacion += (eliminadas_en_paso * 15);
 
-            delete[] marcas;
-            marcas = nullptr;
+            cout << "\n====================================\n";
+            cout << ">>> CASCADA "
+                 << cascadas_jugada_actual
+                 << " GENERADA <<<\n";
+            cout << "====================================\n";
 
-            // 3. Hacer caer las fichas y rellenar con nuevas
-            aplicar_gravedad(tablero, filas, cols);
-            rellenar_espacios_superiores(tablero, filas, cols);
-        } else {
-            delete[] marcas;
-            marcas = nullptr;
+
+            int eliminadas = eliminar_fichas_marcadas(
+                tablero,
+                marcas,
+                filas,
+                cols
+                );
+
+
+            cout << "\n--- TABLERO DESPUES DE ELIMINAR ---\n";
+
+
+            mostrar_tablero_fichas(
+                tablero,
+                filas,
+                cols
+                );
+
+
+            mostrar_trama_binaria(
+                tablero,
+                filas,
+                cols
+                );
+
+
+            cout << "\nFichas eliminadas: "
+                 << eliminadas
+                 << "\n";
+
+
+            total_fichas_eliminadas += eliminadas;
+
+            combinaciones_detectadas++;
+
+            puntuacion += eliminadas * 15;
+
+
+            pausa_visual();
+
+
+
+            cout << "\n--- APLICANDO GRAVEDAD ---\n";
+
+
+            aplicar_gravedad(
+                tablero,
+                filas,
+                cols
+                );
+
+
+            mostrar_tablero_fichas(
+                tablero,
+                filas,
+                cols
+                );
+
+
+            mostrar_trama_binaria(
+                tablero,
+                filas,
+                cols
+                );
+
+
+            pausa_visual();
+
+
+
+            cout << "\n--- RELLENANDO ESPACIOS VACIOS ---\n";
+
+
+            rellenar_espacios_superiores(
+                tablero,
+                filas,
+                cols
+                );
+
+
+            mostrar_tablero_fichas(
+                tablero,
+                filas,
+                cols
+                );
+
+
+            mostrar_trama_binaria(
+                tablero,
+                filas,
+                cols
+                );
+
+
+            pausa_visual();
+
+
         }
 
-    } while (hay_combinacion); // Repite MIENTRAS sigan apareciendo combinaciones
+
+        delete[] marcas;
+
+
+    }while(hay_combinacion);
+
 }

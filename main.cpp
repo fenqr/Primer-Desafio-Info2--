@@ -55,7 +55,6 @@ int main()
 
     int bytes_necesarios = calcular_bytes_necesarios(filas, cols);
     unsigned char* tablero = new unsigned char[bytes_necesarios]();
-
     generar_tablero_aleatorio(tablero, filas, cols);
 
     // Variables primitivas individuales para reemplazar el struct
@@ -101,22 +100,113 @@ int main()
 
         cascadas_jugada_actual = 0;
 
-        eliminar_ficha_usuario(tablero, fila, columna, cols, elim_usuario, total_fichas_eliminadas, puntuacion);
+        cout << "\nANTES DE ELIMINAR\n";
 
-        cout << "\n--- TABLERO CON FICHA ELIMINADA ---\n" << flush;
-        mostrar_tablero_fichas(tablero, filas, cols);
+        eliminar_ficha_usuario(
+            tablero,
+            fila,
+            columna,
+            cols,
+            elim_usuario,
+            total_fichas_eliminadas,
+            puntuacion
+            );
 
-        aplicar_gravedad(tablero, filas, cols);
-        rellenar_espacios_superiores(tablero, filas, cols);
+        cout << "\nDESPUES DE ELIMINAR\n";
 
 
-        cout << "\n--- TABLERO ACTUALIZADO (GRAVEDAD + RELLENO) ---\n" << flush;
-        mostrar_tablero_fichas(tablero, filas, cols);
+        // Mostrar eliminación manual
+        cout << "\n--- TABLERO DESPUES DE ELIMINAR FICHA ---\n";
+
+        mostrar_tablero_fichas(
+            tablero,
+            filas,
+            cols
+            );
+
+        mostrar_trama_binaria(
+            tablero,
+            filas,
+            cols
+            );
+
+
+        pausa_visual();
+
+
+
+        // Aplicar gravedad inicial
+        cout << "\n--- APLICANDO GRAVEDAD ---\n";
+
+
+        aplicar_gravedad(
+            tablero,
+            filas,
+            cols
+            );
+
+
+        mostrar_tablero_fichas(
+            tablero,
+            filas,
+            cols
+            );
+
+        mostrar_trama_binaria(
+            tablero,
+            filas,
+            cols
+            );
+
+
+        pausa_visual();
+
+
+
+        // Rellenar espacios vacíos
+        cout << "\n--- RELLENANDO ESPACIOS VACIOS ---\n";
+
+
+        rellenar_espacios_superiores(
+            tablero,
+            filas,
+            cols
+            );
+
+
+        mostrar_tablero_fichas(
+            tablero,
+            filas,
+            cols
+            );
+
+
+        mostrar_trama_binaria(
+            tablero,
+            filas,
+            cols
+            );
+
+
+        pausa_visual();
+
+
+
+        // Revisar si se generan cascadas
+        procesar_cascadas(
+            tablero,
+            filas,
+            cols,
+            total_fichas_eliminadas,
+            combinaciones_detectadas,
+            cascadas_jugada_actual,
+            puntuacion
+            );
+
+        cout << "\nFIN DE CASCADAS\n";
 
         movimientos++;
 
-        procesar_cascadas(tablero, filas, cols, total_fichas_eliminadas, combinaciones_detectadas, cascadas_jugada_actual, puntuacion);
-        mostrar_tablero_fichas(tablero, filas, cols);
         int opcion_mod = 0;
         do {
             cout << "\n----------------------------------------\n";
@@ -194,10 +284,26 @@ int main()
                 cout << "\n--- TABLERO TRAS LA MODIFICACION ESTRUCTURAL ---\n" << flush;
                 mostrar_tablero_fichas(tablero, filas, cols);
                 mostrar_trama_binaria(tablero, filas, cols);
+                cascadas_jugada_actual = 0;
 
-                procesar_cascadas(tablero, filas, cols, total_fichas_eliminadas, combinaciones_detectadas, cascadas_jugada_actual, puntuacion);
+
+                procesar_cascadas(
+                    tablero,
+                    filas,
+                    cols,
+                    total_fichas_eliminadas,
+                    combinaciones_detectadas,
+                    cascadas_jugada_actual,
+                    puntuacion
+                    );
+
+
+                cout << "\n--- TABLERO DESPUES DE RESOLVER CASCADAS ---\n";
+
                 mostrar_tablero_fichas(tablero, filas, cols);
+
                 mostrar_trama_binaria(tablero, filas, cols);
+
             }
 
         } while (opcion_mod != 5);

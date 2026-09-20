@@ -18,49 +18,80 @@ char convertir_codigo_a_caracter(unsigned char codigo) {
 }
 
 void mostrar_tablero_fichas(const unsigned char* tablero, int filas, int cols) {
-    cout << "\n--- TABLERO DE JUEGO (" << filas << "x" << cols << ") ---\n\n" << flush;
+
+    cout << "\n\nTABLERO JUEGO\n\n";
 
     cout << "    ";
-    for (int c = 0; c < cols; ++c) {
-        cout << c << " ";
-    }
-    cout << "\n  ";
+    for(int c=0;c<cols;c++)
+        cout << c << "   ";
 
-    for (int i = 0; i < cols * 2 + 3; ++i) {
-        cout << "-";
-    }
-    cout << "\n" << flush;
+    cout << "\n";
 
-    for (int f = 0; f < filas; ++f) {
+    for(int f=0;f<filas;f++)
+    {
         cout << f << " | ";
-        for (int c = 0; c < cols; ++c) {
-            unsigned char cod = obtener_ficha(tablero, f, c, cols);
-            cout << convertir_codigo_a_caracter(cod) << " ";
-        }
-        cout << "|\n" << flush;
-    }
 
-    cout << "  ";
-    for (int i = 0; i < cols * 2 + 3; ++i) {
-        cout << "-";
+        for(int c=0;c<cols;c++)
+        {
+            unsigned char cod =
+                obtener_ficha(tablero,f,c,cols);
+
+            cout
+                << convertir_codigo_a_caracter(cod)
+                << " | ";
+        }
+
+        cout << "\n";
     }
-    cout << "\n" << flush;
 }
 
-void mostrar_trama_binaria(const unsigned char* tablero, int filas, int cols) {
-    int total_bytes = calcular_bytes_necesarios(filas, cols);
+void mostrar_trama_binaria(
+    const unsigned char* tablero,
+    int filas,
+    int cols)
+{
 
-    cout << "\n    TRAMA CONTINUA DE BITS EN MEMORIA    \n" << flush;
-    cout << "Total Bytes: " << total_bytes << "\n[ " << flush;
+    int total_bytes =
+        calcular_bytes_necesarios(filas,cols);
 
-    for (int f = 0; f < filas; ++f) {
-        for (int c = 0; c < cols; ++c) {
-            unsigned char cod = obtener_ficha(tablero, f, c, cols);
 
-            cout << ((cod >> 2) & 1)
-                 << ((cod >> 1) & 1)
-                 << (cod & 1) << " ";
+    cout << "\n\nTABLERO BINARIO\n\n";
+
+
+    cout << "    ";
+
+    for(int c=0;c<cols;c++)
+        cout << "    ";
+
+
+    cout << "\n";
+
+
+    for(int f=0;f<filas;f++)
+    {
+
+        cout << f << " | ";
+
+        for(int c=0;c<cols;c++)
+        {
+
+            unsigned char cod =
+                obtener_ficha(tablero,f,c,cols);
+
+
+            cout
+                << ((cod>>2)&1)
+                << ((cod>>1)&1)
+                << (cod&1)
+                << "| ";
+
         }
+
+        cout<<"\n";
     }
-    cout << "]\n" << flush;
+
+
+    cout<<"\nBytes utilizados: "
+         <<total_bytes
+         <<"\n";
 }
