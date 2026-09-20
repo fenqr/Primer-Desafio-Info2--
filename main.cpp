@@ -28,7 +28,7 @@ void mostrar_estado_juego(int filas, int cols,
     cout << "* Combinaciones detectadas: " << combinaciones_detectadas << "\n";
     cout << "* Cascadas producidas en esta jugada: " << cascadas_jugada_actual << "\n";
     cout << "----------------------------------------\n";
-    cout << " REGLAS DE PUNTUACION:                  \n";
+    cout << " REGLAS DE PUNTUACION:                   \n";
     cout << "  - Ficha seleccionada (Manual) : +10 pts\n";
     cout << "  - Ficha por Cascada/3+        : +15 pts\n";
     cout << "----------------------------------------\n";
@@ -101,105 +101,36 @@ int main()
 
         cout << "\nANTES DE ELIMINAR\n";
 
-        eliminar_ficha_usuario(
-            tablero,
-            fila,
-            columna,
-            cols,
-            elim_usuario,
-            total_fichas_eliminadas,
-            puntuacion
-            );
+        eliminar_ficha_usuario(tablero, fila, columna, cols, elim_usuario, total_fichas_eliminadas, puntuacion);
 
         cout << "\nDESPUES DE ELIMINAR\n";
 
-
-
         cout << "\n--- TABLERO DESPUES DE ELIMINAR FICHA ---\n";
 
-        mostrar_tablero_fichas(
-            tablero,
-            filas,
-            cols
-            );
-
-        mostrar_trama_binaria(
-            tablero,
-            filas,
-            cols
-            );
-
+        mostrar_tablero_fichas(tablero, filas, cols);
+        mostrar_trama_binaria(tablero, filas, cols);
 
         pausa_visual();
-
-
-
 
         cout << "\n--- APLICANDO GRAVEDAD ---\n";
 
+        aplicar_gravedad(tablero, filas, cols);
 
-        aplicar_gravedad(
-            tablero,
-            filas,
-            cols
-            );
-
-
-        mostrar_tablero_fichas(
-            tablero,
-            filas,
-            cols
-            );
-
-        mostrar_trama_binaria(
-            tablero,
-            filas,
-            cols
-            );
-
+        mostrar_tablero_fichas(tablero, filas, cols);
+        mostrar_trama_binaria(tablero, filas, cols);
 
         pausa_visual();
-
-
-
 
         cout << "\n--- RELLENANDO ESPACIOS VACIOS ---\n";
 
+        rellenar_espacios_superiores(tablero, filas, cols);
 
-        rellenar_espacios_superiores(
-            tablero,
-            filas,
-            cols
-            );
-
-
-        mostrar_tablero_fichas(
-            tablero,
-            filas,
-            cols
-            );
-
-
-        mostrar_trama_binaria(
-            tablero,
-            filas,
-            cols
-            );
-
+        mostrar_tablero_fichas(tablero, filas, cols);
+        mostrar_trama_binaria(tablero, filas, cols);
 
         pausa_visual();
 
-
-
-        procesar_cascadas(
-            tablero,
-            filas,
-            cols,
-            total_fichas_eliminadas,
-            combinaciones_detectadas,
-            cascadas_jugada_actual,
-            puntuacion
-            );
+        procesar_cascadas(tablero, filas, cols, total_fichas_eliminadas, combinaciones_detectadas, cascadas_jugada_actual, puntuacion);
 
         cout << "\nFIN DE CASCADAS\n";
 
@@ -231,7 +162,6 @@ int main()
                 if (cin >> pos && pos >= 0 && pos <= filas) {
                     tablero = reasignar_agregar_fila(tablero, filas, cols, pos);
                     modificacion_realizada = true;
-
                 } else {
                     cout << "Posicion fuera de rango o invalida.\n" << flush;
                     cin.clear(); cin.ignore(1000, '\n');
@@ -244,7 +174,6 @@ int main()
                     if (cin >> pos && pos >= 0 && pos < filas) {
                         tablero = reasignar_eliminar_fila(tablero, filas, cols, pos);
                         modificacion_realizada = true;
-
                     } else {
                         cout << "Indice fuera de rango o invalido.\n" << flush;
                         cin.clear(); cin.ignore(1000, '\n');
@@ -255,7 +184,6 @@ int main()
                 if (cin >> pos && pos >= 0 && pos <= cols) {
                     tablero = reasignar_agregar_columna(tablero, filas, cols, pos);
                     modificacion_realizada = true;
-
                 } else {
                     cout << "Posicion fuera de rango o invalida.\n" << flush;
                     cin.clear(); cin.ignore(1000, '\n');
@@ -268,7 +196,6 @@ int main()
                     if (cin >> pos && pos >= 0 && pos < cols) {
                         tablero = reasignar_eliminar_columna(tablero, filas, cols, pos);
                         modificacion_realizada = true;
-
                     } else {
                         cout << "Indice fuera de rango o invalido.\n" << flush;
                         cin.clear(); cin.ignore(1000, '\n');
@@ -284,24 +211,11 @@ int main()
                 mostrar_trama_binaria(tablero, filas, cols);
                 cascadas_jugada_actual = 0;
 
-
-                procesar_cascadas(
-                    tablero,
-                    filas,
-                    cols,
-                    total_fichas_eliminadas,
-                    combinaciones_detectadas,
-                    cascadas_jugada_actual,
-                    puntuacion
-                    );
-
+                procesar_cascadas(tablero, filas, cols, total_fichas_eliminadas, combinaciones_detectadas, cascadas_jugada_actual, puntuacion);
 
                 cout << "\n--- TABLERO DESPUES DE RESOLVER CASCADAS ---\n";
-
                 mostrar_tablero_fichas(tablero, filas, cols);
-
                 mostrar_trama_binaria(tablero, filas, cols);
-
             }
 
         } while (opcion_mod != 5);
