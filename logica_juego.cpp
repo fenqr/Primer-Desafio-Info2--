@@ -19,7 +19,7 @@ bool* detectar_combinaciones(const unsigned char* tablero, int filas, int cols, 
     bool* marcas = new bool[total]();
     hay_combinacion = false;
 
-    //Horizontal
+    // Horizontal
     if (cols >= 3) {
         for (int f = 0; f < filas; ++f) {
             for (int c = 0; c <= cols - 3; ++c) {
@@ -37,7 +37,7 @@ bool* detectar_combinaciones(const unsigned char* tablero, int filas, int cols, 
         }
     }
 
-    //Vertical
+    // Vertical
     if (filas >= 3) {
         for (int f = 0; f <= filas - 3; ++f) {
             for (int c = 0; c < cols; ++c) {
@@ -114,147 +114,63 @@ void eliminar_ficha_usuario(unsigned char* tablero, int fila, int col, int cols,
     }
 }
 
-
 void procesar_cascadas(unsigned char* tablero, int filas, int cols,
                        int& total_fichas_eliminadas,
                        int& combinaciones_detectadas,
                        int& cascadas_jugada_actual,
                        int& puntuacion)
 {
-
     bool hay_combinacion = false;
-
 
     do
     {
-
-
         hay_combinacion = false;
 
+        bool* marcas = detectar_combinaciones(tablero, filas, cols, hay_combinacion);
 
-        bool* marcas = detectar_combinaciones(
-            tablero,
-            filas,
-            cols,
-            hay_combinacion
-            );
-
-
-        if(hay_combinacion)
+        if (hay_combinacion)
         {
-
             cascadas_jugada_actual++;
 
-
             cout << "\n====================================\n";
-            cout << ">>> CASCADA "
-                 << cascadas_jugada_actual
-                 << " GENERADA <<<\n";
+            cout << ">>> CASCADA " << cascadas_jugada_actual << " GENERADA <<<\n";
             cout << "====================================\n";
 
-
-            int eliminadas = eliminar_fichas_marcadas(
-                tablero,
-                marcas,
-                filas,
-                cols
-                );
-
+            int eliminadas = eliminar_fichas_marcadas(tablero, marcas, filas, cols);
 
             cout << "\n--- TABLERO DESPUES DE ELIMINAR ---\n";
 
+            mostrar_tablero_fichas(tablero, filas, cols);
+            mostrar_trama_binaria(tablero, filas, cols);
 
-            mostrar_tablero_fichas(
-                tablero,
-                filas,
-                cols
-                );
-
-
-            mostrar_trama_binaria(
-                tablero,
-                filas,
-                cols
-                );
-
-
-            cout << "\nFichas eliminadas: "
-                 << eliminadas
-                 << "\n";
-
+            cout << "\nFichas eliminadas: " << eliminadas << "\n";
 
             total_fichas_eliminadas += eliminadas;
-
             combinaciones_detectadas++;
-
             puntuacion += eliminadas * 15;
 
-
             pausa_visual();
-
-
 
             cout << "\n--- APLICANDO GRAVEDAD ---\n";
 
+            aplicar_gravedad(tablero, filas, cols);
 
-            aplicar_gravedad(
-                tablero,
-                filas,
-                cols
-                );
-
-
-            mostrar_tablero_fichas(
-                tablero,
-                filas,
-                cols
-                );
-
-
-            mostrar_trama_binaria(
-                tablero,
-                filas,
-                cols
-                );
-
+            mostrar_tablero_fichas(tablero, filas, cols);
+            mostrar_trama_binaria(tablero, filas, cols);
 
             pausa_visual();
-
-
 
             cout << "\n--- RELLENANDO ESPACIOS VACIOS ---\n";
 
+            rellenar_espacios_superiores(tablero, filas, cols);
 
-            rellenar_espacios_superiores(
-                tablero,
-                filas,
-                cols
-                );
-
-
-            mostrar_tablero_fichas(
-                tablero,
-                filas,
-                cols
-                );
-
-
-            mostrar_trama_binaria(
-                tablero,
-                filas,
-                cols
-                );
-
+            mostrar_tablero_fichas(tablero, filas, cols);
+            mostrar_trama_binaria(tablero, filas, cols);
 
             pausa_visual();
-
-
         }
-
 
         delete[] marcas;
 
-
-    }while(hay_combinacion);
-
+    } while (hay_combinacion);
 }
