@@ -14,40 +14,43 @@ void pausa_visual()
     cin.get();
 }
 
-// 1. Detectar combinaciones horizontales y verticales (alineaciones de 3 o mas)
 bool* detectar_combinaciones(const unsigned char* tablero, int filas, int cols, bool& hay_combinacion) {
     int total = filas * cols;
-    bool* marcas = new bool[total](); // Inicializado en false
+    bool* marcas = new bool[total]();
     hay_combinacion = false;
 
-    // Revision Horizontal
-    for (int f = 0; f < filas; ++f) {
-        for (int c = 0; c < cols - 2; ++c) {
-            unsigned char f1 = obtener_ficha(tablero, f, c, cols);
-            unsigned char f2 = obtener_ficha(tablero, f, c + 1, cols);
-            unsigned char f3 = obtener_ficha(tablero, f, c + 2, cols);
+    // Horizontal
+    if (cols >= 3) {
+        for (int f = 0; f < filas; ++f) {
+            for (int c = 0; c <= cols - 3; ++c) {
+                unsigned char f1 = obtener_ficha(tablero, f, c, cols);
+                unsigned char f2 = obtener_ficha(tablero, f, c + 1, cols);
+                unsigned char f3 = obtener_ficha(tablero, f, c + 2, cols);
 
-            if (f1 != 0 && f1 == f2 && f2 == f3) {
-                marcas[f * cols + c] = true;
-                marcas[f * cols + (c + 1)] = true;
-                marcas[f * cols + (c + 2)] = true;
-                hay_combinacion = true;
+                if (f1 != 0 && f1 == f2 && f2 == f3) {
+                    marcas[f * cols + c] = true;
+                    marcas[f * cols + (c + 1)] = true;
+                    marcas[f * cols + (c + 2)] = true;
+                    hay_combinacion = true;
+                }
             }
         }
     }
 
-    // Revision Vertical
-    for (int f = 0; f < filas - 2; ++f) {
-        for (int c = 0; c < cols; ++c) {
-            unsigned char f1 = obtener_ficha(tablero, f, c, cols);
-            unsigned char f2 = obtener_ficha(tablero, f + 1, c, cols);
-            unsigned char f3 = obtener_ficha(tablero, f + 2, c, cols);
+    // Vertical
+    if (filas >= 3) {
+        for (int f = 0; f <= filas - 3; ++f) {
+            for (int c = 0; c < cols; ++c) {
+                unsigned char f1 = obtener_ficha(tablero, f, c, cols);
+                unsigned char f2 = obtener_ficha(tablero, f + 1, c, cols);
+                unsigned char f3 = obtener_ficha(tablero, f + 2, c, cols);
 
-            if (f1 != 0 && f1 == f2 && f2 == f3) {
-                marcas[f * cols + c] = true;
-                marcas[(f + 1) * cols + c] = true;
-                marcas[(f + 2) * cols + c] = true;
-                hay_combinacion = true;
+                if (f1 != 0 && f1 == f2 && f2 == f3) {
+                    marcas[f * cols + c] = true;
+                    marcas[(f + 1) * cols + c] = true;
+                    marcas[(f + 2) * cols + c] = true;
+                    hay_combinacion = true;
+                }
             }
         }
     }
@@ -55,7 +58,6 @@ bool* detectar_combinaciones(const unsigned char* tablero, int filas, int cols, 
     return marcas;
 }
 
-// 2. Eliminar fichas marcadas reemplazandolas por el codigo 0
 int eliminar_fichas_marcadas(unsigned char* tablero, const bool* marcas, int filas, int cols) {
     int eliminadas = 0;
     for (int f = 0; f < filas; ++f) {
@@ -69,7 +71,6 @@ int eliminar_fichas_marcadas(unsigned char* tablero, const bool* marcas, int fil
     return eliminadas;
 }
 
-// 3. Aplicar fisica de gravedad (las fichas caen sobre los espacios en 0)
 void aplicar_gravedad(unsigned char* tablero, int filas, int cols) {
     for (int c = 0; c < cols; ++c) {
         for (int f = filas - 1; f >= 0; --f) {
@@ -87,7 +88,6 @@ void aplicar_gravedad(unsigned char* tablero, int filas, int cols) {
     }
 }
 
-// 4. Rellenar las casillas superiores vacias con fichas aleatorias
 void rellenar_espacios_superiores(unsigned char* tablero, int filas, int cols) {
     for (int f = 0; f < filas; ++f) {
         for (int c = 0; c < cols; ++c) {
@@ -99,7 +99,6 @@ void rellenar_espacios_superiores(unsigned char* tablero, int filas, int cols) {
     }
 }
 
-// 5. Eliminar ficha elegida por el usuario
 void eliminar_ficha_usuario(unsigned char* tablero, int fila, int col, int cols,
                             int& elim_usuario,
                             int& total_fichas_eliminadas,
@@ -115,148 +114,63 @@ void eliminar_ficha_usuario(unsigned char* tablero, int fila, int col, int cols,
     }
 }
 
-
-// 6. Procesar ciclo de cascadas en bucle
 void procesar_cascadas(unsigned char* tablero, int filas, int cols,
                        int& total_fichas_eliminadas,
                        int& combinaciones_detectadas,
                        int& cascadas_jugada_actual,
                        int& puntuacion)
 {
-
     bool hay_combinacion = false;
-
 
     do
     {
-
-        // Reiniciar estado de detección
         hay_combinacion = false;
 
+        bool* marcas = detectar_combinaciones(tablero, filas, cols, hay_combinacion);
 
-        bool* marcas = detectar_combinaciones(
-            tablero,
-            filas,
-            cols,
-            hay_combinacion
-            );
-
-
-        if(hay_combinacion)
+        if (hay_combinacion)
         {
-
             cascadas_jugada_actual++;
 
-
             cout << "\n====================================\n";
-            cout << ">>> CASCADA "
-                 << cascadas_jugada_actual
-                 << " GENERADA <<<\n";
+            cout << ">>> CASCADA " << cascadas_jugada_actual << " GENERADA <<<\n";
             cout << "====================================\n";
 
-
-            int eliminadas = eliminar_fichas_marcadas(
-                tablero,
-                marcas,
-                filas,
-                cols
-                );
-
+            int eliminadas = eliminar_fichas_marcadas(tablero, marcas, filas, cols);
 
             cout << "\n--- TABLERO DESPUES DE ELIMINAR ---\n";
 
+            mostrar_tablero_fichas(tablero, filas, cols);
+            mostrar_trama_binaria(tablero, filas, cols);
 
-            mostrar_tablero_fichas(
-                tablero,
-                filas,
-                cols
-                );
-
-
-            mostrar_trama_binaria(
-                tablero,
-                filas,
-                cols
-                );
-
-
-            cout << "\nFichas eliminadas: "
-                 << eliminadas
-                 << "\n";
-
+            cout << "\nFichas eliminadas: " << eliminadas << "\n";
 
             total_fichas_eliminadas += eliminadas;
-
             combinaciones_detectadas++;
-
             puntuacion += eliminadas * 15;
 
-
             pausa_visual();
-
-
 
             cout << "\n--- APLICANDO GRAVEDAD ---\n";
 
+            aplicar_gravedad(tablero, filas, cols);
 
-            aplicar_gravedad(
-                tablero,
-                filas,
-                cols
-                );
-
-
-            mostrar_tablero_fichas(
-                tablero,
-                filas,
-                cols
-                );
-
-
-            mostrar_trama_binaria(
-                tablero,
-                filas,
-                cols
-                );
-
+            mostrar_tablero_fichas(tablero, filas, cols);
+            mostrar_trama_binaria(tablero, filas, cols);
 
             pausa_visual();
-
-
 
             cout << "\n--- RELLENANDO ESPACIOS VACIOS ---\n";
 
+            rellenar_espacios_superiores(tablero, filas, cols);
 
-            rellenar_espacios_superiores(
-                tablero,
-                filas,
-                cols
-                );
-
-
-            mostrar_tablero_fichas(
-                tablero,
-                filas,
-                cols
-                );
-
-
-            mostrar_trama_binaria(
-                tablero,
-                filas,
-                cols
-                );
-
+            mostrar_tablero_fichas(tablero, filas, cols);
+            mostrar_trama_binaria(tablero, filas, cols);
 
             pausa_visual();
-
-
         }
-
 
         delete[] marcas;
 
-
-    }while(hay_combinacion);
-
+    } while (hay_combinacion);
 }
